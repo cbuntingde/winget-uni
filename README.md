@@ -126,6 +126,10 @@ dotnet test
 The suite covers the parsers, version comparison, the settings round trip, and the operation
 queue, with recorded CLI output as fixtures under `tests/WingetUni.Tests/Fixtures`.
 
+## Credits
+
+Created by **Chris Bunting**.
+
 ## License
 
 Released under the [MIT License](LICENSE).
