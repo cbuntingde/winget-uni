@@ -1,0 +1,15 @@
+{
+  "name": "vue",
+  "description": "The progressive JavaScript framework for building modern web UI.",
+  "version": "3.5.44",
+  "license": "MIT",
+  "homepage": "https://vuejs.org/",
+  "repository": {
+    "url": "git+https://github.com/vuejs/core.git",
+    "type": "git"
+  },
+  "author": "Evan You",
+  "keywords": [
+    "vue"
+  ]
+}

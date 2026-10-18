@@ -1,0 +1,14 @@
+Name                              Id                                    Version      Available   Source
+-------------------------------------------------------------------------------------------------------
+Advanced SystemCare               IObit.AdvancedSystemCare              < 20.0.1.256 20.0.1.256  winget
+App Installer                     Microsoft.AppInstaller                1.29.379.0   1.29.380    winget
+GitHub CLI                        GitHub.cli                            2.101.0      2.102.0     winget
+GitHub Desktop                    GitHub.GitHubDesktop                  3.6.6        3.6.7       winget
+Lua                               DEVCOM.Lua                            5.4.5        5.4.6       winget
+Microsoft .NET SDK 10.0.401 (x64) Microsoft.DotNet.SDK.10               10.0.401     10.0.402    winget
+Qoder 0.4.8                       Alibaba.Qoder                         0.4.8        1.106.3     winget
+uv                                astral-sh.uv                          0.12.23      0.13.1      winget
+Visual Studio Build Tools 2026    Microsoft.VisualStudio.BuildTools     18.10.3      18.11.0     winget
+Visual Studio Community 2022      Microsoft.VisualStudio.2022.Community 17.14.41     17.14.42    winget
+Windows Terminal                  Microsoft.WindowsTerminal             1.24.12741.0 1.25.2733.0 winget
+11 upgrades available.

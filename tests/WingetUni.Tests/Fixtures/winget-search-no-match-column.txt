@@ -1,0 +1,37 @@
+Name                                                               Id                                           Version         Source
+----------------------------------------------------------------------------------------------------------------------------------------
+Visual Studio Code                                                 XP9KHM4BK9FZ7Q                               Unknown         msstore
+Visual Studio Community                                            XPDCFJDKLZJLP8                               Unknown         msstore
+Visual Studio Code - Insiders                                      XP8LFCZM790F6B                               Unknown         msstore
+Visual Studio / Code for Command Palette                           15722UsefulApp.WorkspaceLauncherForVSCode    1.30.0.0        winget
+Visual D - Visual Studio Integration of the D Programming Language Dlang.VisualD                                1.5.0           winget
+Microsoft Visual Studio/.NET Log Collection Tool                   Microsoft.VSDotNetLogCollect                 18.0.12127.99   winget
+Microsoft Visual Studio 2010 Tools for Office Runtime              Microsoft.VSTOR                              10.0.60917      winget
+Visual Studio BuildTools 2017                                      Microsoft.VisualStudio.2017.BuildTools       15.9.80         winget
+Visual Studio Enterprise 2017                                      Microsoft.VisualStudio.2017.Enterprise       15.9.70         winget
+Visual Studio BuildTools 2019                                      Microsoft.VisualStudio.2019.BuildTools       16.11.60        winget
+Microsoft Visual Studio Community 2019                             Microsoft.VisualStudio.2019.Community        16.11.37627.13  winget
+Visual Studio Enterprise 2019                                      Microsoft.VisualStudio.2019.Enterprise       16.11.60        winget
+Visual Studio Professional 2019                                    Microsoft.VisualStudio.2019.Professional     16.11.60        winget
+Visual Studio BuildTools 2022                                      Microsoft.VisualStudio.2022.BuildTools       17.14.42        winget
+Visual Studio Community 2022                                       Microsoft.VisualStudio.2022.Community        17.14.42        winget
+Visual Studio Enterprise 2022                                      Microsoft.VisualStudio.2022.Enterprise       17.14.42        winget
+Visual Studio 2022 Remote Debugger for Devices                     Microsoft.VisualStudio.2022.OnecoreMsvsmon   17.14.6         winget
+Visual Studio Professional 2022                                    Microsoft.VisualStudio.2022.Professional     17.14.42        winget
+Remote Tools for Visual Studio 2022                                Microsoft.VisualStudio.2022.RemoteTools      17.14.40        winget
+Visual Studio BuildTools 2026                                      Microsoft.VisualStudio.BuildTools            18.11.0         winget
+Visual Studio Community 2026                                       Microsoft.VisualStudio.Community             18.11.0         winget
+Visual Studio Community 2026 Insiders                              Microsoft.VisualStudio.Community.Insiders    18.12.12308.306 winget
+Visual Studio Configuration Finder                                 Microsoft.VisualStudio.ConfigFinder          1.0.47.55350    winget
+Visual Studio Enterprise 2026                                      Microsoft.VisualStudio.Enterprise            18.11.0         winget
+Visual Studio Enterprise 2026 Insiders                             Microsoft.VisualStudio.Enterprise.Insiders   18.12.12308.306 winget
+Visual Studio Locator                                              Microsoft.VisualStudio.Locator               3.1.7           winget
+Visual Studio Remote Debugger for Devices                          Microsoft.VisualStudio.OnecoreMsvsmon        18.11.0         winget
+Visual Studio Professional 2026                                    Microsoft.VisualStudio.Professional          18.11.0         winget
+Visual Studio Professional 2026 Insiders                           Microsoft.VisualStudio.Professional.Insiders 18.11206.111    winget
+Remote Tools for Visual Studio                                     Microsoft.VisualStudio.RemoteTools           18.10.0         winget
+Microsoft Visual Studio Code                                       Microsoft.VisualStudioCode                   1.142.0         winget
+Microsoft Visual Studio Code CLI                                   Microsoft.VisualStudioCode.CLI               1.126.0         winget
+Microsoft Visual Studio Code Insiders                              Microsoft.VisualStudioCode.Insiders          1.127.0         winget
+Microsoft Visual Studio Code Insiders CLI                          Microsoft.VisualStudioCode.Insiders.CLI      1.127.0         winget
+Visual Studio Extension for Command Palette                        davidegiacometti.VisualStudioForCmdPal       0.1.0           winget

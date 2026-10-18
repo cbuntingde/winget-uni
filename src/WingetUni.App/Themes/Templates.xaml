@@ -1,0 +1,256 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:infra="clr-namespace:WingetUni.App.Infrastructure"
+                    xmlns:vm="clr-namespace:WingetUni.App.ViewModels"
+                    xmlns:views="clr-namespace:WingetUni.App.Views">
+
+    <!--
+        Styles and templates that only the package lists need. They live together so that the
+        templates can build on the row button style with a static reference inside one dictionary;
+        styles shared by the whole window stay in Controls.xaml and are reached with DynamicResource.
+    -->
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <infra:NotEmptyToVisibilityConverter x:Key="NotEmptyToVisibility" />
+    <infra:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
+    <infra:EqualsToBooleanConverter x:Key="EqualsToBoolean" />
+
+    <!--
+        A row button. The colours a row needs differ per action and are set by the row template's
+        triggers, so this template changes only the border's opacity for hover and press rather
+        than painting a background of its own.
+    -->
+    <Style x:Key="ActionButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="12,5" />
+        <Setter Property="Margin" Value="6,0,0,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Opacity" Value="0.82" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Opacity" Value="0.68" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <DataTemplate x:Key="PackageActionButton">
+        <Button Content="{Binding Label}"
+                Command="{Binding Command}"
+                CommandParameter="{Binding Parameter}">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource ActionButton}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPrimary}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsDanger}" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+    </DataTemplate>
+
+    <!--
+        The inner content of one package row, shared by every page. The host supplies the card
+        around it: a plain list uses the list item's own border, and the updates list adds a
+        tick box beside it. The buttons come from the row's own action list, so this one template
+        serves a page that offers Install, one that offers Update and Remove, and so on.
+    -->
+    <DataTemplate x:Key="PackageRowContent">
+        <Grid Margin="14,11">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Name}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Subtitle}"
+                           Style="{DynamicResource CaptionText}"
+                           Margin="0,2,0,0"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="14,0,0,0"
+                        MinWidth="70">
+                <TextBlock Text="{Binding UpdateText}"
+                           Foreground="{DynamicResource WarningBrush}"
+                           FontSize="12"
+                           HorizontalAlignment="Right"
+                           Visibility="{Binding UpdateText, Converter={StaticResource NotEmptyToVisibility}}" />
+                <TextBlock Text="{Binding VersionText}"
+                           Style="{DynamicResource MutedText}"
+                           HorizontalAlignment="Right"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+
+            <ItemsControl Grid.Column="2"
+                          VerticalAlignment="Center"
+                          Margin="16,0,0,0"
+                          ItemsSource="{Binding Actions}"
+                          ItemTemplate="{StaticResource PackageActionButton}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PackageRow" DataType="{x:Type vm:PackageViewModel}">
+        <ContentControl Content="{Binding}"
+                        ContentTemplate="{StaticResource PackageRowContent}"
+                        Focusable="False" />
+    </DataTemplate>
+
+    <!-- The updates list adds a tick box, since one click may act on several rows at once. -->
+    <DataTemplate x:Key="SelectablePackageRow" DataType="{x:Type vm:PackageViewModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0"
+                      IsChecked="{Binding IsSelected}"
+                      VerticalAlignment="Center"
+                      Margin="14,0,0,0"
+                      ToolTip="Include in the bulk update" />
+
+            <ContentControl Grid.Column="1"
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource PackageRowContent}"
+                            Focusable="False" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ManagerSettingRow" DataType="{x:Type vm:ManagerViewModel}">
+        <Grid Margin="0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0"
+                      IsChecked="{Binding IsEnabled}"
+                      IsEnabled="{Binding IsAvailable}"
+                      VerticalAlignment="Center" />
+
+            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" />
+                <TextBlock Text="{Binding StatusText}" Style="{DynamicResource CaptionText}" />
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="OperationItem" DataType="{x:Type vm:OperationViewModel}">
+        <Border Style="{DynamicResource Card}" Padding="12,10" Margin="0,0,0,6">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding Title}"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock Grid.Column="1" Text="{Binding StateText}" FontSize="12" Margin="10,0,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding State}" Value="Running">
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="Succeeded">
+                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding State}" Value="Failed">
+                                        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+
+                <TextBlock Text="{Binding ManagerName}"
+                           Style="{DynamicResource CaptionText}"
+                           Margin="0,2,0,0" />
+
+                <TextBlock Text="{Binding Message}"
+                           Style="{DynamicResource MutedText}"
+                           Margin="0,4,0,0"
+                           Visibility="{Binding Message, Converter={StaticResource NotEmptyToVisibility}}" />
+
+                <TextBox Text="{Binding LogText, Mode=OneWay}"
+                         IsReadOnly="True"
+                         FontFamily="Consolas"
+                         FontSize="11"
+                         MaxHeight="120"
+                         Margin="0,6,0,0"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         Visibility="{Binding LogText, Converter={StaticResource NotEmptyToVisibility}}" />
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <!-- Page data templates: the shell shows a page object in a content control. -->
+    <DataTemplate DataType="{x:Type vm:DiscoverViewModel}">
+        <views:DiscoverView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:InstalledViewModel}">
+        <views:InstalledView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:UpdatesViewModel}">
+        <views:UpdatesView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+        <views:SettingsView />
+    </DataTemplate>
+
+</ResourceDictionary>

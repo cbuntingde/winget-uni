@@ -1,0 +1,22 @@
+Package ID                              Latest Version      Authors                      Downloads      Verified
+----------------------------------------------------------------------------------------------------------------
+dotnet-ef                               10.0.13             Microsoft                    128764344      x
+dotnet-mgfxc                            3.8.6               MonoGame Team                42413
+dotnet-encrypt                          2019.12.1           Crypteron                    3728
+dotnet-sheetly                          1.3.0               Muqimjon Mamadaliyev         1260
+dotnetpilot.mcp.roslyn                  0.5.0               Nick Zdanovych               508
+dotnetefmigrationssquash                1.0.0               Atanas Simeonov              301
+profmcdandotnetapitemplate.cli          1.1.0               profmcdan                    558
+rask.cli                                0.23.0              Tamás Pál                    24353
+tersesharp                              0.79.0              amusleh                      8060
+efmigrationssquasher                    1.2.0               AmirTahan80                  868
+mustate                                 1.0.1               SamirKharchi                 1329
+tokensaver.mcp                          1.15.5              Sebastian Larsson            4874
+efcoremcp                               0.1.0               Vladyslav Zaiets             142
+capydb.cli                              1.2.3               Lora                         4738
+roselinemcp                             3.2.1               Atypical Consulting SRL      1921
+roslynlens                              1.4.0               Jean-François Meyers         1438
+lofibeats.cli                           0.1.5               willibrandon                 1375
+chimpiler                               0.9.0.66            Joel Martinez                3198
+troodon                                 1.1.0               Amund Fremming               1512
+csharpdb.entityframeworkcore.tools      4.6.6               MaxAkbar                     719            x

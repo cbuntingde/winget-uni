@@ -1,0 +1,12 @@
+act-cli|0.2.89
+alera|0.107.1
+aptana-studio|3.7.2
+argocd-autopilot|0.2.28
+ark-vcs|0.7.2
+atlassian-companion|3.2.0
+atlassian-downloader|2.0.0.9
+au|2022.10.24
+azdocli|0.2.36
+azuredatastudio-postgresql|0.6.0
+Bat|0.26.1
+beyondcompare-integration|5.0.0

@@ -1,0 +1,69 @@
+<UserControl x:Class="WingetUni.App.Views.UpdatesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WingetUni.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:UpdatesViewModel}">
+
+    <Grid Margin="24,18,24,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <TextBlock Text="Every package a manager offers a newer version of. Each one starts ticked."
+                       Style="{DynamicResource MutedText}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,16,0" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Update selected"
+                        Style="{DynamicResource PrimaryButton}"
+                        Command="{Binding UpdateSelectedCommand}"
+                        MinWidth="130" />
+                <Button Content="Select all"
+                        Command="{Binding SelectAllCommand}"
+                        Margin="8,0,0,0" />
+                <Button Content="Clear"
+                        Command="{Binding ClearSelectionCommand}"
+                        Margin="8,0,0,0" />
+                <Button Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Margin="8,0,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Margin="0,12,0,0">
+            <TextBlock Text="{Binding Status}"
+                       Style="{DynamicResource MutedText}"
+                       Visibility="{Binding Status, Converter={StaticResource NotEmptyToVisibility}}" />
+
+            <ItemsControl ItemsSource="{Binding Errors}" Margin="0,6,0,0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   Foreground="{DynamicResource WarningBrush}"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <ListView ItemsSource="{Binding Packages}"
+                      ItemTemplate="{DynamicResource SelectablePackageRow}"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" />
+
+            <TextBlock Text="Everything is up to date."
+                       Style="{DynamicResource MutedText}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}" />
+        </Grid>
+    </Grid>
+</UserControl>

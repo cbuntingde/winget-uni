@@ -1,0 +1,43 @@
+Name                                  Id                              Version     Match    Source
+-------------------------------------------------------------------------------------------------
+Git                                   Git.Git                         2.55.0.5             winget
+Git                                   Microsoft.Git                   2.55.0.0.10          winget
+OpenCherry Desktop                    4nrry.OpenCherryDesktop         0.0.1       Tag: git winget
+DevMate                               ADELA.Devmate                   0.1.6       Tag: git winget
+git-crypt                             AGWA.git-crypt                  0.7.0       Tag: git winget
+GitTop                                AmarBego.GitTop                 0.5.3       Tag: git winget
+OffGitx64                             Andrea.OffGitx64                1.1         Tag: git winget
+GitNodes                              AndreaBozzo.GitNodes            0.2.0       Tag: git winget
+RepoZ                                 AndreasWascher.RepoZ            5.5         Tag: git winget
+Araxis Merge                          Araxis.Merge                    2026.1      Tag: git winget
+sem                                   AtaraxyLabs.sem                 0.27.0      Tag: git winget
+Sourcetree                            Atlassian.Sourcetree            3.4.32      Tag: git winget
+Bitbucket CLI                         AvivSinai.Bitbucket-CLI         0.34.0      Tag: git winget
+GitKraken                             Axosoft.GitKraken               12.5.0      Tag: git winget
+Betterleaks                           Betterleaks.Betterleaks         1.9.0       Tag: git winget
+Keeply                                Boy1690.Keeply                  1.0.13      Tag: git winget
+Pier-X                                Chenqi92.PierX                  0.6.6       Tag: git winget
+Commitly                              Commitly.Commitly               1.1.2       Tag: git winget
+Agent Console                         CylCastillo.AgentConsole        0.89.3      Tag: git winget
+dfetch                                DFetch-org.DFetch               0.14.4      Tag: git winget
+Desktop Plus                          DesktopPlus.DesktopPlus         3.6.7-r1    Tag: git winget
+GitWand                               Devlint.GitWand                 3.11.1      Tag: git winget
+DirectCompare                         DirectCompare.DirectCompare     1.9.4       Tag: git winget
+中文Git                               DuckStudio.ChineseGit           3.4         Tag: git winget
+GauntletCI                            EricCogen.GauntletCI            2.8.1       Tag: git winget
+Githical                              Essenciary.Githical             0.1.5       Tag: git winget
+Evolith                               Evolith.Evolith                 0.1.0       Tag: git winget
+Flutter GitUI                         FlutterGitUI.FlutterGitUI       0.1.0       Tag: git winget
+Fork - a fast and friendly git client Fork.Fork                       2.21.0      Tag: git winget
+GLab                                  GLab.GLab                       1.123.0     Tag: git winget
+Git Credential Manager (User)         Git.GCM                         2.9.1       Tag: git winget
+MinGit                                Git.MinGit                      2.56.0.2    Tag: git winget
+BusyBox-based MinGit                  Git.MinGit.BusyBox              2.52.0      Tag: git winget
+GitButler                             GitButler.GitButler             0.22.3      Tag: git winget
+Git Extensions                        GitExtensionsTeam.GitExtensions 7.2.1.7     Tag: git winget
+GitFuse                               GitFuse.GitFuse                 0.1.1       Tag: git winget
+GitHub Desktop                        GitHub.GitHubDesktop            3.6.7       Tag: git winget
+GitHub Desktop Beta                   GitHub.GitHubDesktop.Beta       3.5.5-beta2 Tag: git winget
+Git LFS                               GitHub.GitLFS                   3.8.0       Tag: git winget
+GitHub CLI                            GitHub.cli                      2.102.0     Tag: git winget
+<additional entries truncated due to result limit>

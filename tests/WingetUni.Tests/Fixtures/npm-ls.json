@@ -1,0 +1,9 @@
+{
+  "name": "npm",
+  "dependencies": {
+    "@kilocode/cli": {
+      "version": "7.8.12",
+      "overridden": false
+    }
+  }
+}

@@ -1,0 +1,143 @@
+<UserControl x:Class="WingetUni.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WingetUni.App.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24,18,24,24">
+        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+
+            <TextBlock Text="Appearance" Style="{DynamicResource SectionText}" />
+            <TextBlock Text="The palette the whole window draws from."
+                       Style="{DynamicResource MutedText}"
+                       Margin="0,2,0,8" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                <RadioButton Content="Dark" GroupName="Theme" IsChecked="{Binding IsDarkTheme}" />
+                <RadioButton Content="Light" GroupName="Theme" IsChecked="{Binding IsLightTheme}" Margin="18,4,0,4" />
+            </StackPanel>
+
+            <Border Style="{DynamicResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="Updates and installs" Style="{DynamicResource SectionText}" />
+                    <TextBlock Text="How the application looks for and performs changes."
+                               Style="{DynamicResource MutedText}"
+                               Margin="0,2,0,6" />
+
+                    <CheckBox Content="Check for updates when the application starts"
+                              IsChecked="{Binding CheckForUpdatesOnStartup}" />
+                    <CheckBox Content="Notify me when updates are available"
+                              IsChecked="{Binding NotifyWhenUpdatesAreAvailable}" />
+                    <CheckBox Content="Install silently by default"
+                              IsChecked="{Binding SilentByDefault}" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBlock Text="Search results per manager"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0" />
+                        <TextBox Text="{Binding SearchResultLimit, UpdateSourceTrigger=LostFocus}"
+                                 Width="90"
+                                 HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <TextBlock Text="Default install scope"
+                               Margin="0,12,0,2" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Content="Let the manager decide"
+                                     GroupName="Scope"
+                                     IsChecked="{Binding IsDefaultScope}" />
+                        <RadioButton Content="Current user"
+                                     GroupName="Scope"
+                                     IsChecked="{Binding IsUserScope}"
+                                     Margin="18,4,0,4" />
+                        <RadioButton Content="All users"
+                                     GroupName="Scope"
+                                     IsChecked="{Binding IsMachineScope}"
+                                     Margin="18,4,0,4" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{DynamicResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="Window" Style="{DynamicResource SectionText}" />
+                    <TextBlock Text="What happens when you close the window with the X button."
+                               Style="{DynamicResource MutedText}"
+                               Margin="0,2,0,6" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Content="Exit the application"
+                                     GroupName="CloseBehavior"
+                                     IsChecked="{Binding IsExitOnClose}" />
+                        <RadioButton Content="Minimise to the notification area"
+                                     GroupName="CloseBehavior"
+                                     IsChecked="{Binding IsCloseToTray}"
+                                     Margin="18,4,0,4" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{DynamicResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Package managers" Style="{DynamicResource SectionText}" />
+                            <TextBlock Text="{Binding ManagerSummary}"
+                                       Style="{DynamicResource MutedText}"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Content="Check again"
+                                Command="{Binding ProbeCommand}"
+                                VerticalAlignment="Top"
+                                MinWidth="110" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Managers}"
+                                  ItemTemplate="{DynamicResource ManagerSettingRow}"
+                                  Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{DynamicResource Card}">
+                <StackPanel>
+                    <TextBlock Text="Package list" Style="{DynamicResource SectionText}" />
+                    <TextBlock Text="Save the installed packages to a file, or install the packages recorded in one."
+                               Style="{DynamicResource MutedText}"
+                               Margin="0,2,0,10" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Export installed packages"
+                                Command="{Binding ExportCommand}"
+                                MinWidth="190" />
+                        <Button Content="Import package list"
+                                Command="{Binding ImportCommand}"
+                                Margin="8,0,0,0"
+                                MinWidth="160" />
+                    </StackPanel>
+
+                    <TextBlock Text="Settings file" Margin="0,14,0,2" Style="{DynamicResource CaptionText}" />
+                    <TextBlock Text="{Binding SettingsFilePath}"
+                               Style="{DynamicResource MutedText}"
+                               TextWrapping="Wrap" />
+
+                    <TextBlock Text="{Binding SettingsLoadError}"
+                               Foreground="{DynamicResource WarningBrush}"
+                               FontSize="12"
+                               TextWrapping="Wrap"
+                               Margin="0,6,0,0"
+                               Visibility="{Binding SettingsLoadError, Converter={StaticResource NotEmptyToVisibility}}" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

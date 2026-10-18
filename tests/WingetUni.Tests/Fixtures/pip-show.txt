@@ -1,0 +1,10 @@
+Name: pip
+Version: 26.2.1
+Summary: The PyPA recommended tool for installing Python packages.
+Home-page: https://pip.pypa.io/
+Author:
+Author-email: The pip developers <distutils-sig@python.org>
+License-Expression: MIT
+Location: C:\Python314\Lib\site-packages
+Requires:
+Required-by:
