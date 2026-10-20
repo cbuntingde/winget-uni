@@ -22,6 +22,10 @@ public sealed class SearchResultCache
     }
 
     /// <summary>Builds the key for one search: the term, the limit, and the managers asked.</summary>
+    /// <remarks>
+    /// The term is trimmed and case-folded so that "git" and " Git " share one entry instead
+    /// of running the managers twice for the same question.
+    /// </remarks>
     public static string Key(string query, int limit, IEnumerable<string> managerIds)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -30,7 +34,7 @@ public sealed class SearchResultCache
         // The managers are sorted so that ticking the same ones in a different order still hits
         // the same entry.
         var managers = managerIds.OrderBy(id => id, StringComparer.Ordinal);
-        return $"{limit}\u001f{string.Join(',', managers)}\u001f{query}";
+        return $"{limit}\u001f{string.Join(',', managers)}\u001f{query.Trim().ToUpperInvariant()}";
     }
 
     public bool TryGet(string key, out PackageQueryOutcome outcome)

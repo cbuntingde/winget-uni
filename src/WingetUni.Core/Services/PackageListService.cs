@@ -37,6 +37,12 @@ public sealed class PackageListService
 {
     public const int CurrentFormatVersion = 1;
 
+    /// <summary>
+    /// Largest list file accepted for reading. A package list is plain text of a few
+    /// kilobytes; anything above this is not a list the application wrote.
+    /// </summary>
+    public const long MaxFileBytes = 10_000_000;
+
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         WriteIndented = true,
@@ -74,8 +80,15 @@ public sealed class PackageListService
             Directory.CreateDirectory(directory);
         }
 
-        await using var stream = File.Create(path);
-        await JsonSerializer.SerializeAsync(stream, file, SerializerOptions, cancellationToken).ConfigureAwait(false);
+        // Write to a temporary file and move it into place so an interrupted export
+        // cannot truncate the list that is already there.
+        var temporaryPath = path + ".tmp";
+        await using (var stream = File.Create(temporaryPath))
+        {
+            await JsonSerializer.SerializeAsync(stream, file, SerializerOptions, cancellationToken).ConfigureAwait(false);
+        }
+
+        File.Move(temporaryPath, path, overwrite: true);
     }
 
     /// <summary>
@@ -91,6 +104,11 @@ public sealed class PackageListService
         if (!File.Exists(path))
         {
             throw new InvalidDataException($"'{path}' does not exist.");
+        }
+
+        if (new FileInfo(path).Length > MaxFileBytes)
+        {
+            throw new InvalidDataException($"'{path}' is larger than {MaxFileBytes} bytes and is not a package list.");
         }
 
         PackageListFile? file;

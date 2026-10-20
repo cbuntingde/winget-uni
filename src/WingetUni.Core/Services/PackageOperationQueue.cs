@@ -99,7 +99,10 @@ public sealed class PackageOperationQueue : IDisposable
 
         try
         {
-            _worker?.Wait(TimeSpan.FromSeconds(5));
+            // Longer than ProcessRunner's 10-second kill grace: a cancelled operation
+            // needs that long to drain its output before the worker can finish, and
+            // stopping the wait early would dispose the queue under a running worker.
+            _worker?.Wait(TimeSpan.FromSeconds(15));
         }
         catch (AggregateException)
         {

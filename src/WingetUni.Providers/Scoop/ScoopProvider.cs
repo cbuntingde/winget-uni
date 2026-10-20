@@ -135,6 +135,13 @@ public sealed class ScoopProvider : CliPackageManagerProvider
         };
     }
 
+    /// <summary>Builds the command line for one operation.</summary>
+    /// <remarks>
+    /// Scoop has no equivalent for an install location, installer arguments, or a silent
+    /// flag: it keeps every package under its own directory and installs unattended by
+    /// default. Those options are therefore ignored here, as <see cref="InstallOptions"/>
+    /// allows, rather than passed as flags Scoop would reject.
+    /// </remarks>
     protected override IReadOnlyList<string> BuildArguments(
         PackageOperation operation,
         Package package,
@@ -143,7 +150,9 @@ public sealed class ScoopProvider : CliPackageManagerProvider
         var arguments = new List<string> { CommandFor(operation) };
 
         // Scoop selects a version with an "app@version" specifier rather than with a flag.
-        var specifier = !string.IsNullOrWhiteSpace(options.Version)
+        // Only installing takes a version: updating moves to the newest release and
+        // removing takes a plain name.
+        var specifier = operation == PackageOperation.Install && !string.IsNullOrWhiteSpace(options.Version)
             ? $"{package.Id}@{options.Version}"
             : package.Id;
 

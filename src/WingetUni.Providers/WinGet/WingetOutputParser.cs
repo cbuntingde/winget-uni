@@ -14,17 +14,26 @@ namespace WingetUni.Providers.WinGet;
 internal static class WingetOutputParser
 {
     /// <summary>Reads the results of <c>winget search</c>.</summary>
+    /// <remarks>
+    /// A search prints a Match column only when the search had a query, so its presence
+    /// shifts the Source column by one. The Match column is detected by heading rather than
+    /// by column count: a reshaped five-column listing without a Match column must not have
+    /// its fourth column misread as a match. When Winget is localized and neither heading is
+    /// found by name, Match is left unset and Source falls back to the last column, which
+    /// keeps the column order that is the same in every language.
+    /// </remarks>
     public static IReadOnlyList<Package> ParseSearch(ParsedTable table)
     {
         var name = Resolve(table.Headers, "Name", 0);
         var id = Resolve(table.Headers, "Id", 1);
         var version = Resolve(table.Headers, "Version", 2);
 
-        // A search prints a Match column only when the search had a query, so its presence
-        // shifts the Source column by one.
-        var hasMatchColumn = table.Headers.Count >= 5;
-        var match = Resolve(table.Headers, "Match", hasMatchColumn ? 3 : -1);
-        var source = Resolve(table.Headers, "Source", hasMatchColumn ? 4 : 3);
+        var match = FindColumn(table.Headers, "Match");
+        var source = FindColumn(table.Headers, "Source");
+        if (source < 0 && table.Headers.Count > 0)
+        {
+            source = table.Headers.Count - 1;
+        }
 
         return Build(table, id, row => new Package
         {
@@ -203,6 +212,20 @@ internal static class WingetOutputParser
     {
         var value = column < 0 ? null : ParsedTable.Cell(row, column);
         return string.IsNullOrWhiteSpace(value) ? null : value;
+    }
+
+    /// <summary>Locates a column by heading, or -1 when no heading matches.</summary>
+    private static int FindColumn(IReadOnlyList<string> headers, string heading)
+    {
+        for (var index = 0; index < headers.Count; index++)
+        {
+            if (string.Equals(headers[index], heading, StringComparison.OrdinalIgnoreCase))
+            {
+                return index;
+            }
+        }
+
+        return -1;
     }
 
     /// <summary>Locates a column by heading, falling back to its usual position.</summary>

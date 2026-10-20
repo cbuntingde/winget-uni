@@ -1,6 +1,7 @@
 using WingetUni.Core.Abstractions;
 using WingetUni.Core.Models;
 using WingetUni.Core.Parsing;
+using WingetUni.Core.Processes;
 using WingetUni.Core.Versions;
 
 namespace WingetUni.Providers.DotNetTool;
@@ -75,12 +76,29 @@ public sealed class DotNetToolProvider : CliPackageManagerProvider
 
         foreach (var package in installed)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (package.InstalledVersion is null)
             {
                 continue;
             }
 
-            var latest = await FindLatestAsync(package.Id, cancellationToken).ConfigureAwait(false);
+            // One tool's lookup failing must not discard the updates already found: a
+            // transient registry error for one id is reported by skipping that tool.
+            string? latest;
+            try
+            {
+                latest = await FindLatestAsync(package.Id, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                continue;
+            }
+
             if (latest is null || VersionComparison.Compare(latest, package.InstalledVersion) <= 0)
             {
                 continue;
@@ -189,11 +207,27 @@ public sealed class DotNetToolProvider : CliPackageManagerProvider
     }
 
     /// <summary>Looks up the newest published version of one tool, or null when it is not found.</summary>
+    /// <remarks>
+    /// A failed lookup returns null rather than throwing, so the caller can skip one tool
+    /// without abandoning the rest. Cancellation still propagates.
+    /// </remarks>
     private async Task<string?> FindLatestAsync(string id, CancellationToken cancellationToken)
     {
-        var result = await RunReadAsync(
-            ["tool", "search", id, "--take", LookupTake.ToString()],
-            cancellationToken).ConfigureAwait(false);
+        ProcessRunResult result;
+        try
+        {
+            result = await RunReadAsync(
+                ["tool", "search", id, "--take", LookupTake.ToString()],
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
 
         if (result.ExitCode != 0)
         {

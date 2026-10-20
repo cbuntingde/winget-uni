@@ -56,6 +56,9 @@ public abstract class CliPackageManagerProvider : IPackageManagerProvider
 
     public abstract string DisplayName { get; }
 
+    /// <summary>True unless the manager has no search command. See the interface remarks.</summary>
+    public virtual bool SupportsSearch => true;
+
     /// <summary>Executable name, resolved through the PATH. One element per argument.</summary>
     protected abstract string ExecutableName { get; }
 

@@ -196,7 +196,19 @@ public sealed class SettingsViewModel : PageViewModel
             await Session.PackageLists.SaveAsync(path, outcome.Packages);
 
             var count = outcome.Packages.Count;
-            Shell.Report($"Exported {count} package{(count == 1 ? string.Empty : "s")} to {path}.");
+            if (outcome.Errors.Count > 0)
+            {
+                // A failed manager yields a partial file. Say so plainly rather than
+                // reporting a complete export: the missing managers are named.
+                Shell.Report(
+                    $"Exported {count} package{(count == 1 ? string.Empty : "s")} to {path}, " +
+                    $"but {outcome.Errors.Count} manager{(outcome.Errors.Count == 1 ? string.Empty : "s")} could not be read: " +
+                    string.Join("; ", outcome.Errors));
+            }
+            else
+            {
+                Shell.Report($"Exported {count} package{(count == 1 ? string.Empty : "s")} to {path}.");
+            }
         }
         catch (Exception exception)
         {
@@ -250,7 +262,7 @@ public sealed class SettingsViewModel : PageViewModel
             return;
         }
 
-        var options = DefaultInstallOptions();
+        var defaults = DefaultInstallOptions();
 
         foreach (var entry in installable)
         {
@@ -260,6 +272,13 @@ public sealed class SettingsViewModel : PageViewModel
                 Id = entry.Id,
                 Name = entry.Name ?? entry.Id,
                 AvailableVersion = entry.Version,
+            };
+
+            // Install the recorded version rather than the newest one: a list exported
+            // with pinned versions must reproduce them instead of floating forward.
+            var options = defaults with
+            {
+                Version = string.IsNullOrWhiteSpace(entry.Version) ? null : entry.Version,
             };
 
             Shell.Enqueue(PackageOperation.Install, ToViewModel(package), options);

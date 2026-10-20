@@ -229,6 +229,10 @@ public sealed class DiscoverViewModel : PageViewModel
         parameter is PackageViewModel package ? Shell.ShowDetailsAsync(package) : Task.CompletedTask;
 
     /// <summary>Runs a search, reusing the answer when the same search was made recently.</summary>
+    /// <remarks>
+    /// Only clean results are remembered: an outcome carrying errors may reflect a transient
+    /// failure, and caching it would keep showing that failure instead of retrying.
+    /// </remarks>
     private async Task<PackageQueryOutcome> RunSearchAsync(string query, int limit, IReadOnlyList<string> managerIds)
     {
         var key = SearchResultCache.Key(query, limit, managerIds);
@@ -238,7 +242,11 @@ public sealed class DiscoverViewModel : PageViewModel
         }
 
         var outcome = await Session.Queries.SearchAsync(query, limit, managerIds);
-        Session.Searches.Set(key, outcome);
+        if (outcome.Errors.Count == 0)
+        {
+            Session.Searches.Set(key, outcome);
+        }
+
         return outcome;
     }
 

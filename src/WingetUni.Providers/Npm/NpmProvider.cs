@@ -63,6 +63,8 @@ public sealed class NpmProvider : CliPackageManagerProvider
             ["search", "--json", $"--searchlimit={Math.Max(limit, 1)}", query],
             cancellationToken).ConfigureAwait(false);
 
+        // Rows without a name cannot be installed, updated, or removed, so they are
+        // skipped rather than shown as something the user could select.
         return CliJson.Select(CliText.JoinLines(result.StandardOutput), element => new Package
         {
             ManagerId = ProviderId,
@@ -70,7 +72,9 @@ public sealed class NpmProvider : CliPackageManagerProvider
             Name = CliJson.String(element, "name") ?? string.Empty,
             AvailableVersion = CliJson.String(element, "version"),
             Source = SourceName,
-        });
+        })
+            .Where(package => !string.IsNullOrWhiteSpace(package.Id))
+            .ToList();
     }
 
     public override async Task<IReadOnlyList<Package>> ListInstalledAsync(CancellationToken cancellationToken = default)

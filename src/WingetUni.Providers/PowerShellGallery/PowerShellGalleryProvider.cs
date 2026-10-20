@@ -165,6 +165,8 @@ public sealed class PowerShellGalleryProvider : CliPackageManagerProvider
             return [];
         }
 
+        // Rows without a name cannot be installed, updated, or removed, so they are
+        // skipped rather than shown as something the user could select.
         return CliJson.Select(CliText.JoinLines(result.StandardOutput), element => new Package
         {
             ManagerId = ProviderId,
@@ -172,7 +174,9 @@ public sealed class PowerShellGalleryProvider : CliPackageManagerProvider
             Name = CliJson.String(element, "Name") ?? string.Empty,
             AvailableVersion = CliJson.String(element, "Version"),
             Source = CliJson.String(element, "Repository") ?? SourceName,
-        });
+        })
+            .Where(package => !string.IsNullOrWhiteSpace(package.Id))
+            .ToList();
     }
 
     public override async Task<IReadOnlyList<Package>> ListInstalledAsync(CancellationToken cancellationToken = default)
@@ -185,6 +189,8 @@ public sealed class PowerShellGalleryProvider : CliPackageManagerProvider
             return [];
         }
 
+        // Rows without a name cannot be installed, updated, or removed, so they are
+        // skipped rather than shown as something the user could select.
         return CliJson.Select(CliText.JoinLines(result.StandardOutput), element => new Package
         {
             ManagerId = ProviderId,
@@ -192,7 +198,9 @@ public sealed class PowerShellGalleryProvider : CliPackageManagerProvider
             Name = CliJson.String(element, "Name") ?? string.Empty,
             InstalledVersion = CliJson.String(element, "Version"),
             Source = CliJson.String(element, "Repository") ?? SourceName,
-        });
+        })
+            .Where(package => !string.IsNullOrWhiteSpace(package.Id))
+            .ToList();
     }
 
     public override async Task<IReadOnlyList<Package>> ListUpgradableAsync(CancellationToken cancellationToken = default)
@@ -354,8 +362,6 @@ public sealed class PowerShellGalleryProvider : CliPackageManagerProvider
     private static string Wrap(string body) =>
         "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; " +
         "try { " + body + " } catch { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }";
-
-    private static string EnsureLineWrap(string body) => body;
 
     private static IReadOnlyList<string> CommandArguments(string body) =>
     [

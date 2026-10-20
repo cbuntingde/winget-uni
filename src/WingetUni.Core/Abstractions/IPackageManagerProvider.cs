@@ -33,6 +33,14 @@ public interface IPackageManagerProvider
     /// </summary>
     Task ProbeAsync(CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Whether <see cref="SearchAsync"/> can answer. A manager without a search command reports
+    /// this as false so that aggregated searches can skip it silently instead of showing an
+    /// error the user did not cause. Calling <see cref="SearchAsync"/> on such a manager still
+    /// throws <see cref="PackageManagerException"/> explaining why it cannot answer.
+    /// </summary>
+    bool SupportsSearch { get; }
+
     /// <summary>Searches the manager's configured sources.</summary>
     /// <param name="query">Search terms. An empty query returns the manager's default listing.</param>
     /// <param name="limit">Maximum number of results to request.</param>

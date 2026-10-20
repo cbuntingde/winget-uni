@@ -100,6 +100,52 @@ public sealed class WingetOutputParserTests
     }
 
     [Fact]
+    public void ReadsAListingWithoutAMatchColumn()
+    {
+        var table = TextTable.Parse(Fixtures.ReadLines("winget-search-no-match-column.txt"));
+
+        var packages = WingetOutputParser.ParseSearch(table);
+
+        Assert.NotEmpty(packages);
+        Assert.All(packages, package => Assert.Null(package.Match));
+        Assert.Equal("msstore", packages[0].Source);
+    }
+
+    [Fact]
+    public void DoesNotMistakeAReshapedFifthColumnForAMatch()
+    {
+        string[] lines =
+        [
+            "Name    Id    Version    Available    Source",
+            "--------------------------------------------",
+            "Alpha   A     1.0        2.0          winget",
+        ];
+
+        var package = Assert.Single(WingetOutputParser.ParseSearch(TextTable.Parse(lines)));
+
+        Assert.Null(package.Match);
+        Assert.Equal("winget", package.Source);
+        Assert.Equal("1.0", package.AvailableVersion);
+    }
+
+    [Fact]
+    public void FallsBackToTheLastColumnWhenHeadingsAreLocalized()
+    {
+        string[] lines =
+        [
+            "Nom     ID    Version    Correspondance    Provenance",
+            "-----------------------------------------------------",
+            "Alpha   A     1.0        Balise: x         depot",
+        ];
+
+        var package = Assert.Single(WingetOutputParser.ParseSearch(TextTable.Parse(lines)));
+
+        Assert.Equal("A", package.Id);
+        Assert.Null(package.Match);
+        Assert.Equal("depot", package.Source);
+    }
+
+    [Fact]
     public void ReadsPackageDetails()
     {
         var details = WingetOutputParser.ParseDetails("astral-sh.uv", "uv", Fixtures.ReadLines("winget-show.txt"));

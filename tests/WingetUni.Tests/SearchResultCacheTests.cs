@@ -107,6 +107,17 @@ public sealed class SearchResultCacheTests
     }
 
     [Fact]
+    public void TheKeyIgnoresCaseAndSurroundingWhitespace()
+    {
+        Assert.Equal(
+            SearchResultCache.Key("git", 25, ["winget"]),
+            SearchResultCache.Key(" Git ", 25, ["winget"]));
+        Assert.Equal(
+            SearchResultCache.Key("GIT", 25, ["winget"]),
+            SearchResultCache.Key("git", 25, ["winget"]));
+    }
+
+    [Fact]
     public void MissingArgumentsAreRejected()
     {
         var cache = new SearchResultCache();

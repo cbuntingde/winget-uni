@@ -33,29 +33,46 @@ public sealed class PackageQueryService
     /// Searches the given managers, or every available manager when
     /// <paramref name="managerIds"/> is null.
     /// </summary>
+    /// <remarks>
+    /// Managers that cannot search are skipped silently when at least one other manager can
+    /// answer, so pip does not attach an error to every multi-manager search. When every
+    /// requested manager cannot search, they are still asked so the caller gets the reason
+    /// rather than an empty result with no explanation.
+    /// </remarks>
     public Task<PackageQueryOutcome> SearchAsync(
         string query,
         int limitPerManager,
         IReadOnlyCollection<string>? managerIds = null,
-        CancellationToken cancellationToken = default) =>
-        RunAsync(managerIds, (provider, token) => provider.SearchAsync(query, limitPerManager, token), cancellationToken);
+        CancellationToken cancellationToken = default)
+    {
+        var providers = Select(managerIds);
+        if (providers.Count > 1)
+        {
+            var searchable = providers.Where(provider => provider.SupportsSearch).ToList();
+            if (searchable.Count > 0)
+            {
+                providers = searchable;
+            }
+        }
+
+        return RunAsync(providers, (provider, token) => provider.SearchAsync(query, limitPerManager, token), cancellationToken);
+    }
 
     public Task<PackageQueryOutcome> ListInstalledAsync(
         IReadOnlyCollection<string>? managerIds = null,
         CancellationToken cancellationToken = default) =>
-        RunAsync(managerIds, (provider, token) => provider.ListInstalledAsync(token), cancellationToken);
+        RunAsync(Select(managerIds), (provider, token) => provider.ListInstalledAsync(token), cancellationToken);
 
     public Task<PackageQueryOutcome> ListUpgradableAsync(
         IReadOnlyCollection<string>? managerIds = null,
         CancellationToken cancellationToken = default) =>
-        RunAsync(managerIds, (provider, token) => provider.ListUpgradableAsync(token), cancellationToken);
+        RunAsync(Select(managerIds), (provider, token) => provider.ListUpgradableAsync(token), cancellationToken);
 
     private async Task<PackageQueryOutcome> RunAsync(
-        IReadOnlyCollection<string>? managerIds,
+        IReadOnlyList<IPackageManagerProvider> providers,
         Func<IPackageManagerProvider, CancellationToken, Task<IReadOnlyList<Package>>> query,
         CancellationToken cancellationToken)
     {
-        var providers = Select(managerIds);
         if (providers.Count == 0)
         {
             return PackageQueryOutcome.Empty;
@@ -97,8 +114,17 @@ public sealed class PackageQueryService
         {
             return (await query(provider, cancellationToken).ConfigureAwait(false), null);
         }
-        catch (PackageManagerException exception)
+        catch (OperationCanceledException)
         {
+            // Cancellation is the caller's decision, not a manager failure: let it propagate
+            // so the awaiting UI can stop rather than reporting every manager as failed.
+            throw;
+        }
+        catch (Exception exception)
+        {
+            // One manager failing must not hide the others. Anything a provider throws,
+            // whether a PackageManagerException or a parser defect, is reported alongside
+            // the results from the managers that did answer.
             return ([], $"{provider.DisplayName}: {exception.Message}");
         }
     }

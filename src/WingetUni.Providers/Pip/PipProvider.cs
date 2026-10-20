@@ -31,6 +31,9 @@ public sealed class PipProvider : CliPackageManagerProvider
 
     public override string DisplayName => "pip";
 
+    /// <summary>pip has no search command. See the type remarks.</summary>
+    public override bool SupportsSearch => false;
+
     protected override string ExecutableName => "pip";
 
     public override Task<IReadOnlyList<Package>> SearchAsync(
@@ -49,7 +52,11 @@ public sealed class PipProvider : CliPackageManagerProvider
             return [];
         }
 
-        return CliJson.Select(CliText.JoinLines(result.StandardOutput), ReadInstalled);
+        // Rows without a name cannot be installed, updated, or removed, so they are
+        // skipped rather than shown as something the user could select.
+        return CliJson.Select(CliText.JoinLines(result.StandardOutput), ReadInstalled)
+            .Where(package => !string.IsNullOrWhiteSpace(package.Id))
+            .ToList();
     }
 
     public override async Task<IReadOnlyList<Package>> ListUpgradableAsync(CancellationToken cancellationToken = default)
@@ -60,7 +67,9 @@ public sealed class PipProvider : CliPackageManagerProvider
             return [];
         }
 
-        return CliJson.Select(CliText.JoinLines(result.StandardOutput), ReadOutdated);
+        return CliJson.Select(CliText.JoinLines(result.StandardOutput), ReadOutdated)
+            .Where(package => !string.IsNullOrWhiteSpace(package.Id))
+            .ToList();
     }
 
     public override async Task<PackageDetails?> GetDetailsAsync(
@@ -123,7 +132,9 @@ public sealed class PipProvider : CliPackageManagerProvider
                     arguments.Add("--user");
                 }
 
-                if (operation != PackageOperation.Uninstall && !string.IsNullOrWhiteSpace(options.CustomArguments))
+                // This case only handles Install and Update; Uninstall has its own case
+                // below, so no operation check is needed here.
+                if (!string.IsNullOrWhiteSpace(options.CustomArguments))
                 {
                     arguments.AddRange(ArgumentSplitter.Split(options.CustomArguments));
                 }
