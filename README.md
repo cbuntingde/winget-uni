@@ -1,5 +1,7 @@
 # Winget Uni
 
+[![CI](https://github.com/cbuntingde/winget-uni/actions/workflows/ci.yml/badge.svg)](https://github.com/cbuntingde/winget-uni/actions/workflows/ci.yml)
+
 **One place for your package managers.**
 
 Winget Uni is a Windows desktop application that brings WinGet, Chocolatey, Scoop, pip, npm,
@@ -22,7 +24,8 @@ watch long-running operations in a queue that survives closing the window.
   so a long install is not interrupted.
 - **Package details.** Any row can be expanded into the full metadata the manager reports.
 - **Export and import.** Save the installed set to JSON, or install everything recorded in a file
-  written on another machine.
+  written on another machine. Import installs the recorded versions, and a partial export
+  names the managers that could not be read instead of reporting success.
 - **Light and dark themes**, a taskbar and notification-area icon, and a close button whose
   behaviour you choose.
 - **A manager you do not have is not hidden.** It is still listed, with the reason it is
@@ -55,7 +58,7 @@ Themes, update checks, install defaults, the close behaviour, and per-manager sw
 | WinGet                | `winget`          | Ships with Windows 10/11                |
 | Chocolatey            | `choco`           | Machine-wide packages may need consent  |
 | Scoop                 | `scoop`           | Per-user packages                       |
-| pip                   | `pip`             | Python packages                         |
+| pip                   | `pip`             | Python packages; offers no search, so multi-manager searches skip it |
 | npm                   | `npm.cmd`         | Node packages                           |
 | .NET Tool             | `dotnet`          | Global .NET tools                       |
 | PowerShell Gallery    | `powershell`      | PowerShell modules                      |
@@ -68,6 +71,13 @@ A manager that is not installed, or is switched off in Settings, is never querie
 - The [.NET 9 SDK](https://dotnet.microsoft.com/download) to build and run from source
   (the repository pins the SDK through `global.json`).
 - At least one of the package managers above, on `PATH`.
+
+## Install
+
+Download `WingetUni-vX.Y.Z-win-x64.zip` from the latest
+[release](https://github.com/cbuntingde/winget-uni/releases), unzip it anywhere, and run
+`WingetUni.App.exe`. The download is self-contained and needs no .NET install; settings
+live in `%LOCALAPPDATA%\WingetUni`.
 
 ## Getting started
 
@@ -123,8 +133,10 @@ run against recorded output instead of hand-written approximations.
 dotnet test
 ```
 
-The suite covers the parsers, version comparison, the settings round trip, and the operation
-queue, with recorded CLI output as fixtures under `tests/WingetUni.Tests/Fixtures`.
+The suite covers the parsers, version comparison, the settings and package-list round
+trips, query aggregation and failure isolation, provider argument building, and the search
+cache, with recorded CLI output as fixtures under `tests/WingetUni.Tests/Fixtures`. The
+operation queue's timing behaviour is exercised by hand and has no automated tests.
 
 ## Credits
 
